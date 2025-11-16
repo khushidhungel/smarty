@@ -6,6 +6,7 @@ import google.generativeai as genai
 from streamlit_option_menu import option_menu
 import streamlit_authenticator as stauth
 import time
+import requests
 
 # ==============================
 # CONFIGURATION
@@ -29,7 +30,38 @@ try:
 except Exception as e:
     st.warning("Could not read secrets.toml: " + str(e))
     genai_key = None
-
+ #blast function    
+def run_blast(sequence, program="blastp", database="nr"):
+    url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi"
+    params = {
+        "CMD": "Put",
+        "PROGRAM": program,
+        "DATABASE": database,
+        "QUERY": sequence,
+        "FORMAT_TYPE": "JSON2_Summary"
+    }
+    r = requests.post(url, data=params)
+    r.raise_for_status()
+    
+    # Get RID (search ID)
+    rid_line = [line for line in r.text.splitlines() if "RID =" in line]
+    if not rid_line:
+        raise ValueError("Failed to get BLAST RID")
+    rid = rid_line[0].split("=")[1].strip()
+    
+    # Wait until BLAST finishes
+    while True:
+        time.sleep(5)
+        r2 = requests.get(url, params={"CMD": "Get", "RID": rid, "FORMAT_TYPE": "JSON2_Summary"})
+        if "Status=WAITING" in r2.text:
+            continue
+        elif "Status=FAILED" in r2.text:
+            raise ValueError("BLAST search failed")
+        else:
+            break
+    
+    return r2.json()
+    
 # ==============================
 # LOAD OR INITIALIZE USER DATA
 # ==============================
@@ -112,7 +144,7 @@ else:
         st.title(f"Welcome, {st.session_state.user.split('@')[0].capitalize()} 👋")
         choice = option_menu(
             "Navigation",
-            ["Home", "Protein Explorer", "AI Assistant", "Logout"],
+            ["Home", "Protein Explorer","BLAST Search", "AI Assistant", "Logout"],
             icons=["house", "dna", "robot", "box-arrow-right"],
             menu_icon="cast",
             default_index=0,
@@ -213,9 +245,38 @@ else:
                     st.write(text or "No text returned from model.")
                 except Exception as e:
                     st.error(f"AI call failed: {e}")
+                    
+    elif choice == "BLAST Search":
+        st.header("🔬 BLAST Sequence Search")
+    seq_input = st.text_area("Enter your sequence:", height=150)
+    program = st.selectbox("BLAST Program", ["blastn", "blastp", "blastx", "tblastn", "tblastx"])
+    database = st.text_input("Database", "nr")  # default NCBI database
+
+    if st.button("Run BLAST"):
+        if not seq_input.strip():
+            st.warning("Please enter a sequence.")
+        else:
+            with st.spinner("Running BLAST..."):
+                try:
+                    results = run_blast(seq_input, program, database)
+                    hits = results.get("BlastOutput2", [{}])[0].get("report", {}).get("results", {}).get("search", {}).get("hits", [])
+                    if hits:
+                        table = []
+                        for h in hits[:10]:  # top 10 hits
+                            accession = h["description"][0]["accession"]
+                            desc = h["description"][0]["title"]
+                            score = h["hsps"][0]["bit_score"]
+                            evalue = h["hsps"][0]["evalue"]
+                            table.append({"Accession": accession, "Description": desc, "Score": score, "E-value": evalue})
+                        st.table(table)
+                    else:
+                        st.info("No hits found.")
+                except Exception as e:
+                    st.error(f"BLAST failed: {e}")
 
     elif choice == "Logout":
         st.session_state.logged_in = False
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
