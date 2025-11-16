@@ -252,15 +252,15 @@ else:
     program = st.selectbox("BLAST Program", ["blastn", "blastp", "blastx", "tblastn", "tblastx"])
     database = st.text_input("Database", "nr")  # default NCBI database
 
-    if st.button("Run BLAST"):
-        if not seq_input.strip():
+      if st.button("Run BLAST"):
+          if not seq_input.strip():
             st.warning("Please enter a sequence.")
-        else:
-            with st.spinner("Running BLAST..."):
-                try:
-                    results = run_blast(seq_input, program, database)
-                    hits = results.get("BlastOutput2", [{}])[0].get("report", {}).get("results", {}).get("search", {}).get("hits", [])
-                    if hits:
+          else:
+              with st.spinner("Running BLAST..."):
+                  try:
+                     results = run_blast(seq_input, program, database)
+                     hits = results.get("BlastOutput2", [{}])[0].get("report", {}).get("results", {}).get("search", {}).get("hits", [])
+                     if hits:
                         table = []
                         for h in hits[:10]:  # top 10 hits
                             accession = h["description"][0]["accession"]
@@ -269,7 +269,7 @@ else:
                             evalue = h["hsps"][0]["evalue"]
                             table.append({"Accession": accession, "Description": desc, "Score": score, "E-value": evalue})
                         st.table(table)
-                    else:
+                     else:
                         st.info("No hits found.")
                 except Exception as e:
                     st.error(f"BLAST failed: {e}")
@@ -279,4 +279,5 @@ else:
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
