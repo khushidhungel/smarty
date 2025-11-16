@@ -248,36 +248,39 @@ else:
                     
     elif choice == "BLAST Search":
         st.header("🔬 BLAST Sequence Search")
-    seq_input = st.text_area("Enter your sequence:", height=150)
-    program = st.selectbox("BLAST Program", ["blastn", "blastp", "blastx", "tblastn", "tblastx"])
-    database = st.text_input("Database", "nr")  # default NCBI database
+    
+        seq_input = st.text_area("Enter your sequence:", height=150)
+        program = st.selectbox("BLAST Program", ["blastn", "blastp", "blastx", "tblastn", "tblastx"])
+        database = st.text_input("Database", "nr")  # default NCBI database
 
-      if st.button("Run BLAST"):
-          if not seq_input.strip():
+        if st.button("Run BLAST"):
+            if not seq_input.strip():
             st.warning("Please enter a sequence.")
-          else:
-              with st.spinner("Running BLAST..."):
-                  try:
-                     results = run_blast(seq_input, program, database)
-                     hits = results.get("BlastOutput2", [{}])[0].get("report", {}).get("results", {}).get("search", {}).get("hits", [])
-                     if hits:
-                        table = []
-                        for h in hits[:10]:  # top 10 hits
-                            accession = h["description"][0]["accession"]
-                            desc = h["description"][0]["title"]
-                            score = h["hsps"][0]["bit_score"]
-                            evalue = h["hsps"][0]["evalue"]
-                            table.append({"Accession": accession, "Description": desc, "Score": score, "E-value": evalue})
-                        st.table(table)
-                     else:
-                        st.info("No hits found.")
-                except Exception as e:
-                    st.error(f"BLAST failed: {e}")
+            else:
+                with st.spinner("Running BLAST..."):
+                    try:
+                        results = run_blast(seq_input, program, database)
+                        hits = results.get("BlastOutput2", [{}])[0].get("report", {}).get("results", {}).get("search", {}).get("hits", [])
+                        if hits:
+                            table = []
+                            for h in hits[:10]:  # top 10 hits
+                                accession = h["description"][0]["accession"]
+                                desc = h["description"][0]["title"]
+                                score = h["hsps"][0]["bit_score"]
+                                evalue = h["hsps"][0]["evalue"]
+                                table.append({"Accession": accession, "Description": desc, "Score": score, "E-value": evalue})
+                            st.table(table)
+                        else:
+                            st.info("No hits found.")
+                    except Exception as e:
+                        st.error(f"BLAST failed: {e}")
+
 
     elif choice == "Logout":
         st.session_state.logged_in = False
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
 
