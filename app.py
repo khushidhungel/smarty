@@ -18,10 +18,10 @@ try:
     # safe access (st.secrets raises if no valid TOML found)
     if "api" in st.secrets and "gemini_key" in st.secrets["api"]:
         genai_key = st.secrets["api"]["gemini_key"]
-        st.info(f"Gemini key found — length={len(genai_key)}; masked={genai_key[:4]}...{genai_key[-4:]}")
+        #st.info(f"Gemini key found — length={len(genai_key)}; masked={genai_key[:4]}...{genai_key[-4:]}")
         try:
             genai.configure(api_key=genai_key)
-            st.success("genai.configure succeeded (key loaded).")
+            #st.success("genai.configure succeeded (key loaded).")
         except Exception as e:
             st.error("Failed to configure Gemini client: " + str(e))
             genai_key = None
@@ -281,6 +281,7 @@ else:
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
 
 
