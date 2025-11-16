@@ -255,7 +255,7 @@ else:
 
         if st.button("Run BLAST"):
             if not seq_input.strip():
-            st.warning("Please enter a sequence.")
+                st.warning("Please enter a sequence.")
             else:
                 with st.spinner("Running BLAST..."):
                     try:
@@ -281,6 +281,7 @@ else:
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
 
 
