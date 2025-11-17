@@ -56,9 +56,49 @@ label, .stTextInput label, .stTextArea label, .stSelectbox label, .stPassword la
     font-size: 1.1rem !important;
     text-shadow: 0px 0px 6px rgba(255,200,100,0.5);
         }
+        /* Floating sidebar pull button */
+#sidebar-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #6a5acd;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    z-index: 9999;
+    transition: 0.2s;
+        }
+#sidebar-toggle:hover {
+    background: #8377ff;
+        }
 
     </style>
 """, unsafe_allow_html=True)
+
+st.markdown("""
+    <div id="sidebar-toggle">☰</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<script>
+const btn = document.getElementById("sidebar-toggle");
+const sidebar = window.parent.document.querySelector('section[data-testid="stSidebar"]');
+
+let open = true;
+
+btn.onclick = () => {
+    if (open) {
+        sidebar.style.transform = "translateX(-260px)";
+    } else {
+        sidebar.style.transform = "translateX(0)";
+    }
+    open = !open;    
+}
+</script>
+""", unsafe_allow_html=True)
+
 
 # ==============================
 # CONFIGURATION
@@ -341,6 +381,7 @@ else:
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
 
 
