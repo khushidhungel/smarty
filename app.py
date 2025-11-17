@@ -335,7 +335,7 @@ else:
                              st.code(formatted_seq, language='text')
 
                     # Expandable raw JSON
-                         with st.expander("Show Full JSON Data"):
+                         with st.expander("Raw Protein Data"):
                              st.json(data)
 
 
@@ -395,6 +395,7 @@ else:
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
 
 
