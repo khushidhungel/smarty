@@ -8,6 +8,43 @@ import streamlit_authenticator as stauth
 import time
 import requests
 
+# ---- CUSTOM THEME ----
+st.markdown("""
+    <style>
+        .stApp {
+            background: linear-gradient(135deg, #1e1e2f, #2e2e48);
+            color: white;
+        }
+        section[data-testid="stSidebar"] {
+            background-color: #181828;
+        }
+        .stTextInput textarea, .stTextArea textarea {
+            background-color: #2c2c3e !important;
+            color: #ffffff !important;
+            border-radius: 10px;
+            border: 1px solid #444 !important;
+        }
+        .stButton button {
+            background-color: #6a5acd;
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border-radius: 10px;
+            border: none;
+            transition: 0.2s;
+        }
+        .stButton button:hover {
+            background-color: #8377ff;
+        }
+        h1, h2, h3, h4 {
+            color: #dcdcff !important;
+            text-shadow: 0px 0px 15px rgba(180,180,255,0.4);
+        }
+        .stAlert {
+            border-radius: 10px !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # ==============================
 # CONFIGURATION
 # ==============================
@@ -281,6 +318,7 @@ else:
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
 
 
