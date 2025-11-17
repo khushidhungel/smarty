@@ -74,26 +74,6 @@ label, .stTextInput label, .stTextArea label, .stSelectbox label, .stPassword la
     background: #8377ff;
         }
         
-/* Floating sidebar toggle button */
-#sidebar-toggle {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background-color: #6a5acd;
-    color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 10px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 9999;
-    box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
-    user-select: none;
-        }
-#sidebar-toggle:hover {
-    background-color: #8377ff;
-        }
-
     </style>
 """, unsafe_allow_html=True)
 
@@ -401,6 +381,7 @@ else:
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
 
 
