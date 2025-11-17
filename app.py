@@ -49,14 +49,13 @@ st.markdown("""
             font-size: 1.05rem !important;
             text-shadow: 0px 0px 6px rgba(255,200,100,0.4);
         }
-        /* ⭐ Highlight ALL Streamlit input labels */
-.css-16idsys, .css-1kyxreq, label {
+       /* ⭐ Universal highlight for ALL Streamlit labels (login, signup, email, password, etc.) */
+label, .stTextInput label, .stTextArea label, .stSelectbox label, .stPassword label {
     color: #ffcb6b !important;
-    font-weight: 600 !important;
-    font-size: 1.05rem !important;
-    text-shadow: 0px 0px 6px rgba(255,200,100,0.4);
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    text-shadow: 0px 0px 6px rgba(255,200,100,0.5);
         }
-
 
     </style>
 """, unsafe_allow_html=True)
@@ -342,6 +341,7 @@ else:
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
 
 
