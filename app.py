@@ -304,26 +304,40 @@ else:
                     if not data:
                         st.error("Protein not found (404). Check the UniProt ID.")
                     else:
-                        # safe nested extraction
-                        protein_name = (data.get("proteinDescription", {}) \
-                                           .get("recommendedName", {}) \
-                                           .get("fullName", {}) \
-                                           .get("value")) or "Name not available"
-                        organism = (data.get("organism", {}) \
+               # Safe extraction
+                    
+                         protein_name = (data.get("proteinDescription", {})
+                                            .get("recommendedName", {})
+                                            .get("fullName", {})
+                                            .get("value")) or "Name not available"
+                         organism = (data.get("organism", {})
                                         .get("scientificName")) or "Organism not available"
-                        seq = (data.get("sequence", {}) \
-                                  .get("value"))
-                        length = (data.get("sequence", {}) \
-                                    .get("length")) or (len(seq) if seq else "N/A")
-                        preview = (seq[:300] + "...") if seq and len(seq) > 300 else (seq or "Sequence not available")
-                        st.subheader("Protein Information:")
-                        st.json({
-                            "Protein Name": protein_name,
-                            "Organism": organism,
-                            "Length": length,
-                            "Sequence (preview)": preview,
-                            "Raw JSON (partial)": {k: data.get(k) for k in ("accession", "dbReferences", "comments") if k in data}
-                    })
+                         seq = (data.get("sequence", {}).get("value")) or ""
+                         length = (data.get("sequence", {}).get("length")) or len(seq)
+
+        # Format sequence into lines of 60 chars
+                         formatted_seq = "\n".join([seq[i:i+60] for i in range(0, len(seq), 60)])
+
+        # Display in columns
+                         col1, col2 = st.columns([2, 3])
+
+                         with col1:
+                             st.markdown(f"""
+                                 <div style='background-color:#2c2c3e; padding:15px; border-radius:10px;'>
+                                      🧬 <b>Protein Name:</b> {protein_name}<br>
+                                      🌍 <b>Organism:</b> {organism}<br>
+                                      📏 <b>Length:</b> {length}
+                                 </div>
+                            """,  unsafe_allow_html=True)
+
+                         with col2:
+                             st.subheader("Sequence Preview")
+                             st.code(formatted_seq, language='text')
+
+                    # Expandable raw JSON
+                         with st.expander("Show Full JSON Data"):
+                             st.json(data)
+
 
     elif choice == "AI Assistant":
         st.header("🤖 BioAI Chat Assistant")
@@ -381,6 +395,7 @@ else:
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
 
 
