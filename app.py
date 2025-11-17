@@ -50,6 +50,14 @@ st.markdown("""
 # ==============================
 st.set_page_config(page_title="🧬 BioAI Explorer", page_icon="🧬", layout="wide")
 
+# ---- NICE HEADER (paste it RIGHT HERE) ----
+st.markdown("""
+    <div style='text-align:center; padding: 20px 0;'>
+        <h1 style='font-size: 3rem;'>🧬 BioAI Explorer</h1>
+        <p style='font-size: 1.2rem; color: #cfcfff;'>AI-powered sequence analysis & BLAST search</p>
+    </div>
+""", unsafe_allow_html=True)
+
 genai_key = None
 try:
     # safe access (st.secrets raises if no valid TOML found)
@@ -318,6 +326,7 @@ else:
         st.session_state.user = None
         st.success("You have been logged out successfully!")
         st.rerun()
+
 
 
 
